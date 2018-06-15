@@ -39,12 +39,12 @@ public class Mypanel extends JPanel implements KeyListener {
                 update();
                 repaint();
             }});
-            timer.start();
+        timer.start();
 
         //shapes
         legos[0] = new Lego(box.getSubimage(boxSize*0,0,boxSize, boxSize), new int[][]{
-                  {1, 1, 1, 1,}
-                  } , this, 1);
+                {1, 1, 1, 1,}
+        } , this, 1);
 
         legos[1] = new Lego(box.getSubimage(boxSize*1,0,boxSize, boxSize), new int[][]{
                 {1, 1, 1},
@@ -83,19 +83,14 @@ public class Mypanel extends JPanel implements KeyListener {
         if(gameOver){
             timer.stop();
         }
-
     }
+
     public void makeLego(){
         int drawLots = (int)(Math.random()*legos.length);
         Lego newLego = new Lego(legos[drawLots].getBox(),legos[drawLots].getCoords(), this, legos[drawLots].getColor());
         currentLego = newLego;
-        for (int row = 0; row < currentLego.getCoords().length; row++ ){
-            for (int col = 0; col < currentLego.getCoords()[row].length; col++) {
-                if(currentLego.getCoords()[row][col] !=0) {
-                    // columns + starting shape points
-                    if(mypanel[row][col+3] !=0){
-                        gameOver = true;
-                    }}}}}
+        checkGameOver();
+        }
 
     @Override
     public void paintComponent(Graphics g) {
@@ -104,10 +99,10 @@ public class Mypanel extends JPanel implements KeyListener {
         for (int row = 0; row < mypanel.length; row++ ){
             for (int col = 0; col < mypanel[row].length; col++){
                 if(mypanel[row][col] != 0)
-                g.drawImage(box.getSubimage((mypanel[row][col]-1)*boxSize,0, boxSize, boxSize),col*boxSize, row*boxSize, null);
+                    g.drawImage(box.getSubimage((mypanel[row][col]-1)*boxSize,0, boxSize, boxSize),col*boxSize, row*boxSize, null);
             }
         }
-        // drawing lines
+        // drawing lines on board
         for (int i = 0; i < mypanelHeight; i++) {
             g.drawLine(0, i * boxSize, boxSize * mypanelHeight, i * boxSize);
         }
@@ -131,20 +126,30 @@ public class Mypanel extends JPanel implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         if(e.getKeyCode() == KeyEvent.VK_LEFT)
-            currentLego.setDeltaX(-1);
+            currentLego.setPositionOfX(-1);
         if(e.getKeyCode() == KeyEvent.VK_RIGHT)
-                currentLego.setDeltaX(1);
+            currentLego.setPositionOfX(1);
         if(e.getKeyCode() == KeyEvent.VK_DOWN)
             currentLego.setSpeedDown();
         if(e.getKeyCode() == KeyEvent.VK_SPACE)
             currentLego.rotateLego();
-        }
+    }
 
     @Override
     public void keyReleased(KeyEvent e) {
         if(e.getKeyCode() == KeyEvent.VK_DOWN)
             currentLego.setSpeedNormal();
     }
+
+    public void checkGameOver(){
+        for (int row = 0; row < currentLego.getCoords().length; row++ )
+            for (int col = 0; col < currentLego.getCoords()[row].length; col++) {
+                if (currentLego.getCoords()[row][col] != 0) {
+                    // columns + starting shape points
+                    if (mypanel[row][col + 3] != 0) {
+                        gameOver = true;
+                    }
+                }
+            }
+    }
 }
-
-

@@ -8,17 +8,17 @@ public class Window {
     private Mypanel mypanel;
 
     public Window(){
-    window = new JFrame("TETRIS");
-    window.setSize(WIDTH, HEIGHT);
-    window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    window.setResizable(false);
-    window.setLocationRelativeTo(null);
-    mypanel = new Mypanel();
-    window.add(mypanel);
-    window.addKeyListener(mypanel);
-    window.setVisible(true);
-     }
+        window = new JFrame("TETRIS");
+        window.setSize(WIDTH, HEIGHT);
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        window.setResizable(false);
+        window.setLocationRelativeTo(null);
+        mypanel = new Mypanel();
+        window.add(mypanel);
+        window.addKeyListener(mypanel);
+        window.setVisible(true);
+    }
 
     public static void main(String[] args) {
-	new Window();
+        new Window();
     }}

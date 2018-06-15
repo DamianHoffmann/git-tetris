@@ -9,7 +9,7 @@ public class Lego   {
     private int[][] coords;
     private int color;
     private int x, y;
-    private int deltaX;
+    private int positionOfX;
     private int currentSpeed;
     private int normalSpeed = 600, SpeedDown = 50;
     private long lastTime, time;
@@ -31,49 +31,52 @@ public class Lego   {
     public void update (){
         time += System.currentTimeMillis() - lastTime;
         lastTime = System.currentTimeMillis();
+        checkEndOfLine(); // check End of Line and make new Lego (if End of Line)
+        checkSideMoves();
+
         if(endOfLine) {
-            if(time>currentSpeed) {
-                for (int row = 0; row < coords.length; row++) {
-                    for (int col = 0; col < coords[row].length; col++) {
-                        if (coords[row][col] != 0) {
-                            mypanel.getMypanel()[y + row][x + col] = color;
-                        }}}
+                colorBoard();
                 clearLine();
                 mypanel.makeLego();
-            }}
-        // dropping box down
-        if(y + 1 + coords.length <=20){
+            }
+        endOfMove = true;
+        positionOfX =0;
+    }
+
+    public void checkSideMoves(){
+        if (x + positionOfX + coords[0].length <= 10 && x + positionOfX >= 0) {
             for (int row = 0; row < coords.length; row++ ){
                 for (int col = 0; col < coords[row].length; col++) {
                     if(coords[row][col] !=0){
-                        if(mypanel.getMypanel()[y+ row + 1][x +col] != 0){
+                        if (mypanel.getMypanel()[y+row][x + col + positionOfX] !=0){
+                            endOfMove = false;
+                        }}}}
+            if(endOfMove) {
+                x += positionOfX;
+            }}}
+
+    public void checkEndOfLine() {
+        if (y + 1 + coords.length <= 20) {
+            for (int row = 0; row < coords.length; row++) {
+                for (int col = 0; col < coords[row].length; col++) {
+                    if (coords[row][col] != 0) {
+                        if (mypanel.getMypanel()[y + row + 1][x + col] != 0) {
                             endOfLine = true;
                         }}}}
-        if (time > currentSpeed)
-        {
-            y++;
-          time = 0;
-        }
+            if (time > currentSpeed){
+                    y++;
+                    time = 0;
+            }}
+        else {
+            endOfLine = true;
+        }}
 
-        } else{
-
-        endOfLine = true;
-        }
-
-        if (x + deltaX + coords[0].length <= 10 && x +deltaX >= 0) {
-            for (int row = 0; row < coords.length; row++ ){
-                for (int col = 0; col < coords[row].length; col++) {
-                    if(coords[row][col] !=0){
-                       if (mypanel.getMypanel()[y+row][x + col +deltaX] !=0){
-                           endOfMove = false;
-                           System.out.println(mypanel.getMypanel()[y+row][x + col +deltaX] );
-                       }}}}
-                if(endOfMove)
-            x += deltaX;
-        }
-        endOfMove = true;
-        deltaX=0;
-    }
+    public void colorBoard (){
+        for (int row = 0; row < coords.length; row++) {
+            for (int col = 0; col < coords[row].length; col++) {
+                if (coords[row][col] != 0) {
+                    mypanel.getMypanel()[y + row][x + col] = color;
+                }}}}
 
     public void render (Graphics g){
         for(int row = 0; row < coords.length; row++){
@@ -92,17 +95,17 @@ public class Lego   {
                     count++;
                 }
                 mypanel.getMypanel()[checkHeight][j] = mypanel.getMypanel()[i][j];
-                }
-                if(count < mypanel.getMypanel()[0].length){
+            }
+            if(count < mypanel.getMypanel()[0].length){
                 checkHeight--;
-                }}}
+            }}}
 
     private int [][] transposeLego(int[][] matrix) {
         int newMatrix[][] = new int[matrix[0].length][matrix.length];
-                for (int i = 0; i <matrix[0].length; i++) {
-                    for (int j = 0  ; j < matrix.length; j++) {
-                        newMatrix[i][j] = matrix[j][i];
-                        }}
+        for (int i = 0; i <matrix[0].length; i++) {
+            for (int j = 0  ; j < matrix.length; j++) {
+                newMatrix[i][j] = matrix[j][i];
+            }}
         return newMatrix;
     }
 
@@ -116,20 +119,15 @@ public class Lego   {
         return matrix;
     }
 
-
     public void rotateLego() {
         if(endOfLine){
             return;
         }
         int clearlego[][] = null;
-
         clearlego = reverseLego(coords);
         clearlego = transposeLego(clearlego);
-
-
-
-        if (x + clearlego[0].length >= 11 || x + clearlego[0].length < 0 || y + clearlego.length > 20) {
-            return;
+        if (x + clearlego[0].length > 10 || x + clearlego[0].length < 0 || y + clearlego.length > 20) {
+                return;
         }
         for(int row = 0; row < clearlego.length; row++){
             for(int col = 0; col<clearlego[0].length; col++){
@@ -141,10 +139,8 @@ public class Lego   {
         coords = clearlego;
     }
 
-
-    // moving box horizontally
-    public void setDeltaX(int deltaX){
-        this.deltaX = deltaX;
+    public void setPositionOfX(int positionOfX){
+        this.positionOfX = positionOfX;
     }
 
     public void setSpeedDown() {
@@ -154,7 +150,6 @@ public class Lego   {
     public void setSpeedNormal() {
         currentSpeed = normalSpeed;
     }
-
 
     public int[][] getCoords() {
         return coords;
@@ -174,6 +169,5 @@ public class Lego   {
 
 
 }
-
 
 
