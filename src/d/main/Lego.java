@@ -2,27 +2,30 @@ package d.main;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
+import java.util.List;
 
 public class Lego   {
     private BufferedImage box;
-    private Mypanel mypanel;
+    private MyPanel myPanel;
     private int[][] coords;
     private int color;
-    private int x, y;
+    private int StartPY;
+    private int StartPX;
     private int positionOfX;
     private int currentSpeed;
     private int normalSpeed = 600, SpeedDown = 50;
     private long lastTime, time;
     private boolean endOfLine = false, endOfMove = false;
 
-    public Lego(BufferedImage box, int[][] coords, Mypanel mypanel, int color){
+    public Lego(BufferedImage box, int[][] coords, MyPanel myPanel, int color){
         this.box = box;
         this.coords = coords;
-        this.mypanel = mypanel;
+        this.myPanel = myPanel;
         this.color = color;
         // starting points
-        x = 3;
-        y = -1;
+        StartPX = 3;
+        StartPY = -1;
         time = 0;
         lastTime = 0;
         currentSpeed = normalSpeed;
@@ -37,34 +40,34 @@ public class Lego   {
         if(endOfLine) {
                 colorBoard();
                 clearLine();
-                mypanel.makeLego();
+                myPanel.makeLego();
             }
         endOfMove = true;
         positionOfX =0;
     }
 
     public void checkSideMoves(){
-        if (x + positionOfX + coords[0].length <= 10 && x + positionOfX >= 0) {
+        if (StartPX + positionOfX + coords[0].length <= 10 && StartPX + positionOfX >= 0) {
             for (int row = 0; row < coords.length; row++ ){
                 for (int col = 0; col < coords[row].length; col++) {
                     if(coords[row][col] !=0){
-                        if (mypanel.getMypanel()[y+row][x + col + positionOfX] !=0){
+                        if (myPanel.getMypanel()[StartPY +row][StartPX + col + positionOfX] !=0){
                             endOfMove = false;
                         }}}}
             if(endOfMove) {
-                x += positionOfX;
+                StartPX += positionOfX;
             }}}
 
     public void checkEndOfLine() {
-        if (y + 1 + coords.length <= 20) {
+        if (StartPY + 1 + coords.length <= 20) {
             for (int row = 0; row < coords.length; row++) {
                 for (int col = 0; col < coords[row].length; col++) {
                     if (coords[row][col] != 0) {
-                        if (mypanel.getMypanel()[y + row + 1][x + col] != 0) {
+                        if (myPanel.getMypanel()[StartPY + row + 1][StartPX + col] != 0) {
                             endOfLine = true;
                         }}}}
             if (time > currentSpeed){
-                    y++;
+                    StartPY++;
                     time = 0;
             }}
         else {
@@ -75,28 +78,28 @@ public class Lego   {
         for (int row = 0; row < coords.length; row++) {
             for (int col = 0; col < coords[row].length; col++) {
                 if (coords[row][col] != 0) {
-                    mypanel.getMypanel()[y + row][x + col] = color;
+                    myPanel.getMypanel()[StartPY + row][StartPX + col] = color;
                 }}}}
 
     public void render (Graphics g){
         for(int row = 0; row < coords.length; row++){
             for(int col = 0; col <coords[row].length; col++){
                 if(coords[row][col] != 0) {
-                    g.drawImage(box, col * mypanel.getBlockSize() + x*mypanel.getBlockSize(),
-                            row * mypanel.getBlockSize() +y*mypanel.getBlockSize(), null);
+                    g.drawImage(box, col * myPanel.getBlockSize() + StartPX * myPanel.getBlockSize(),
+                            row * myPanel.getBlockSize() + StartPY * myPanel.getBlockSize(), null);
                 }}}}
 
     private void clearLine(){
-        int checkHeight = mypanel.getMypanel().length - 1;
+        int checkHeight = myPanel.getMypanel().length - 1;
         for(int i = checkHeight; i > 0; i--){
             int count = 0;
-            for(int j = 0; j < mypanel.getMypanel()[0].length ; j++){
-                if(mypanel.getMypanel()[i][j] != 0) {
+            for(int j = 0; j < myPanel.getMypanel()[0].length ; j++){
+                if(myPanel.getMypanel()[i][j] != 0) {
                     count++;
                 }
-                mypanel.getMypanel()[checkHeight][j] = mypanel.getMypanel()[i][j];
+                myPanel.getMypanel()[checkHeight][j] = myPanel.getMypanel()[i][j];
             }
-            if(count < mypanel.getMypanel()[0].length){
+            if(count < myPanel.getMypanel()[0].length){
                 checkHeight--;
             }}}
 
@@ -126,12 +129,12 @@ public class Lego   {
         int clearlego[][] = null;
         clearlego = reverseLego(coords);
         clearlego = transposeLego(clearlego);
-        if (x + clearlego[0].length > 10 || x + clearlego[0].length < 0 || y + clearlego.length > 20) {
+        if (StartPX + clearlego[0].length > 10 || StartPX + clearlego[0].length < 0 || StartPY + clearlego.length > 20) {
                 return;
         }
         for(int row = 0; row < clearlego.length; row++){
             for(int col = 0; col<clearlego[0].length; col++){
-                if(mypanel.getMypanel()[y +row][x+col] !=0){
+                if(myPanel.getMypanel()[StartPY +row][StartPX +col] !=0){
                     return;
                 }
             }

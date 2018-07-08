@@ -9,8 +9,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Arrays;
 
-public class Mypanel extends JPanel implements KeyListener {
+public class MyPanel extends JPanel implements KeyListener {
 
     private BufferedImage box;
     private final int mypanelHeight = 20, mypanelWidth = 10;
@@ -18,16 +19,19 @@ public class Mypanel extends JPanel implements KeyListener {
     private int[][] mypanel = new int[mypanelHeight][mypanelWidth];
     private boolean gameOver = false;
     //shapes
-    private Lego[] legos = new Lego[7];
+    private Lego[] legos = new Lego[shapes.size()];
     private Lego currentLego;
     //timer
     private Timer timer;
     private final int FPS = 60;
     private final int delay = 1000/FPS;
 
-    public Mypanel() {
+    private static java.util.List<int[][]> shapes = Arrays.asList(new int[][]{{1,1,1}, {1,0,0}}, new int[][]{{1,1,1,1}}, new int[][]{{1,1,1}, {0,0,1}}, new int[][]{{1,1,1}, {0,1,0}},
+            new int[][]{{0,1,1}, {1,1,0}}, new int[][]{{1,1,0}, {0,1,1}}, new int[][]{{1,1}, {1,1}} );
+
+    public MyPanel() {
         try {
-            box = ImageIO.read(Mypanel.class.getResource("color.png"));
+            box = ImageIO.read(MyPanel.class.getResource("color.png"));
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -40,41 +44,6 @@ public class Mypanel extends JPanel implements KeyListener {
                 repaint();
             }});
         timer.start();
-
-        //shapes
-        legos[0] = new Lego(box.getSubimage(boxSize*0,0,boxSize, boxSize), new int[][]{
-                {1, 1, 1, 1,}
-        } , this, 1);
-
-        legos[1] = new Lego(box.getSubimage(boxSize*1,0,boxSize, boxSize), new int[][]{
-                {1, 1, 1},
-                {1, 0, 0}
-        } , this, 2 );
-
-        legos[2] = new Lego(box.getSubimage(boxSize*2,0,boxSize, boxSize), new int[][]{
-                {1, 1, 1},
-                {0, 0, 1},
-        } , this, 3 );
-
-        legos[3] = new Lego(box.getSubimage(boxSize*3,0,boxSize, boxSize), new int[][]{
-                {0, 1, 1},
-                {1, 1, 0}
-        } , this, 4 );
-
-        legos[4] = new Lego(box.getSubimage(boxSize*4,0,boxSize, boxSize), new int[][]{
-                {1, 1, 0},
-                {0, 1, 1},
-        } , this, 5 );
-
-        legos[5] = new Lego(box.getSubimage(boxSize*5,0,boxSize, boxSize), new int[][]{
-                {1, 1},
-                {1, 1}
-        } , this, 6 );
-
-        legos[6] = new Lego(box.getSubimage(boxSize*6,0,boxSize, boxSize), new int[][]{
-                {1, 1, 1,},
-                {0, 1, 0,}
-        } , this, 7 );
         makeLego();
     }
 
@@ -85,10 +54,13 @@ public class Mypanel extends JPanel implements KeyListener {
         }
     }
 
+    public Lego createLego(int x){
+        return new Lego(box.getSubimage(boxSize*x,0,boxSize, boxSize), shapes.get(x), this, x+1 );
+    }
+
     public void makeLego(){
-        int drawLots = (int)(Math.random()*legos.length);
-        Lego newLego = new Lego(legos[drawLots].getBox(),legos[drawLots].getCoords(), this, legos[drawLots].getColor());
-        currentLego = newLego;
+        int drawLots = (int)(Math.random()*shapes.size());
+        currentLego = createLego(drawLots);
         checkGameOver();
         }
 

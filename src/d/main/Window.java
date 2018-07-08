@@ -5,7 +5,7 @@ import javax.swing.JFrame;
 public class Window {
     public static final int WIDTH = 315, HEIGHT =637;
     private JFrame window;
-    private Mypanel mypanel;
+    private MyPanel myPanel;
 
     public Window(){
         window = new JFrame("TETRIS");
@@ -13,9 +13,9 @@ public class Window {
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);
         window.setLocationRelativeTo(null);
-        mypanel = new Mypanel();
-        window.add(mypanel);
-        window.addKeyListener(mypanel);
+        myPanel = new MyPanel();
+        window.add(myPanel);
+        window.addKeyListener(myPanel);
         window.setVisible(true);
     }
 
